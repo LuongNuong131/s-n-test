@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sàn Giao Dịch Vật Phẩm GameFi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e1e1e;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #4a4a4a;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #5a5a5a;
+      }
+
+      .item-card:hover .item-image {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      /* Custom styles for range slider */
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #6ee7b7;
+        border-radius: 50%;
+        cursor: pointer;
+        margin-top: -6px; /* Center thumb */
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: #6ee7b7;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body class="overflow-x-hidden">
+    <div class="min-h-screen w-full flex flex-col">
+      <!-- Header -->
+      <header
+        class="bg-[#1a1a1a]/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50"
+      >
+        <div class="container mx-auto px-4">
+          <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-8">
+              <h1
+                class="text-2xl font-black text-white uppercase tracking-wider"
+              >
+                <span class="text-emerald-400">Echo</span>MMO
+              </h1>
+              <nav
+                class="hidden md:flex items-center space-x-6 text-sm font-medium"
+              >
+                <a
+                  href="#"
+                  class="text-emerald-400 border-b-2 border-emerald-400 pb-1"
+                  >MARKET</a
+                >
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >TRADE</a
+                >
+              </nav>
+            </div>
+            <div class="flex items-center space-x-3">
+              <button
+                class="bg-emerald-500 text-black font-bold text-xs px-4 py-2 rounded-md hover:bg-emerald-400 transition-all duration-300 transform hover:scale-105"
+              >
+                REGISTER
+              </button>
+              <button
+                class="bg-gray-700 text-white font-bold text-xs px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
+              >
+                LOGIN
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="flex-grow container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Sidebar: Filters -->
+          <aside
+            class="lg:col-span-2 bg-[#1a1a1a] rounded-lg p-4 self-start sticky top-20"
+          >
+            <h2 class="text-lg font-bold mb-4 border-b border-gray-700 pb-2">
+              FILTER
+            </h2>
+            <div class="space-y-6">
+              <div>
+                <h3 class="font-semibold text-sm mb-2 text-gray-400">
+                  CATEGORY
+                </h3>
+                <div id="category-filters" class="flex flex-wrap gap-2">
+                  <button
+                    data-category="ALL"
+                    class="filter-btn-active text-xs px-3 py-1 rounded-full"
+                  >
+                    ALL
+                  </button>
+                  <button
+                    data-category="Pistol"
+                    class="filter-btn text-xs px-3 py-1 rounded-full"
+                  >
+                    PISTOL
+                  </button>
+                  <button
+                    data-category="SMG"
+                    class="filter-btn text-xs px-3 py-1 rounded-full"
+                  >
+                    SMG
+                  </button>
+                  <button
+                    data-category="Rifle"
+                    class="filter-btn text-xs px-3 py-1 rounded-full"
+                  >
+                    RIFLE
+                  </button>
+                  <button
+                    data-category="Knife"
+                    class="filter-btn text-xs px-3 py-1 rounded-full"
+                  >
+                    KNIFE
+                  </button>
+                  <button
+                    data-category="AWP"
+                    class="filter-btn text-xs px-3 py-1 rounded-full"
+                  >
+                    AWP
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h3 class="font-semibold text-sm mb-3 text-gray-400">
+                  EXTERIOR
+                </h3>
+                <div id="exterior-filters" class="space-y-2 text-sm">
+                  <label class="flex items-center space-x-2 cursor-pointer"
+                    ><input
+                      type="checkbox"
+                      value="Factory New"
+                      class="form-checkbox bg-gray-800 border-gray-600 rounded text-emerald-500 focus:ring-emerald-500"
+                    />
+                    <span>Factory New</span></label
+                  >
+                  <label class="flex items-center space-x-2 cursor-pointer"
+                    ><input
+                      type="checkbox"
+                      value="Minimal Wear"
+                      class="form-checkbox bg-gray-800 border-gray-600 rounded text-emerald-500 focus:ring-emerald-500"
+                    />
+                    <span>Minimal Wear</span></label
+                  >
+                  <label class="flex items-center space-x-2 cursor-pointer"
+                    ><input
+                      type="checkbox"
+                      value="Field-Tested"
+                      class="form-checkbox bg-gray-800 border-gray-600 rounded text-emerald-500 focus:ring-emerald-500"
+                      checked
+                    />
+                    <span>Field-Tested</span></label
+                  >
+                  <label class="flex items-center space-x-2 cursor-pointer"
+                    ><input
+                      type="checkbox"
+                      value="Well-Worn"
+                      class="form-checkbox bg-gray-800 border-gray-600 rounded text-emerald-500 focus:ring-emerald-500"
+                    />
+                    <span>Well-Worn</span></label
+                  >
+                  <label class="flex items-center space-x-2 cursor-pointer"
+                    ><input
+                      type="checkbox"
+                      value="Battle-Scarred"
+                      class="form-checkbox bg-gray-800 border-gray-600 rounded text-emerald-500 focus:ring-emerald-500"
+                    />
+                    <span>Battle-Scarred</span></label
+                  >
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-semibold text-sm text-gray-400">
+                    PRICE RANGE
+                  </h3>
+                  <span
+                    id="price-value"
+                    class="text-emerald-400 font-bold text-sm"
+                    >$2500</span
+                  >
+                </div>
+                <input
+                  id="price-range"
+                  type="range"
+                  min="0"
+                  max="3000"
+                  value="2500"
+                  class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+            </div>
+          </aside>
+
+          <!-- Center Content: Item Grid -->
+          <div class="lg:col-span-10">
+            <div
+              class="bg-[#1a1a1a] rounded-lg p-4 mb-4 flex items-center gap-4"
+            >
+              <input
+                id="search-input"
+                type="text"
+                placeholder="Search for items by name or type..."
+                class="w-full bg-[#2a2a2a] border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+              />
+            </div>
+            <div
+              id="item-grid"
+              class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+            >
+              <!-- Item cards will be injected here by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const mockItems = [
+          {
+            name: "Lichon Dashed",
+            type: "Glock-18",
+            category: "Pistol",
+            price: 24.5,
+            rarity: "gold",
+            exterior: "Field-Tested",
+            img: "https://placehold.co/300x200/1a1a1a/6ee7b7?text=Glock-18",
+          },
+          {
+            name: "Azure Zebra",
+            type: "Mac-10",
+            category: "SMG",
+            price: 45.75,
+            rarity: "purple",
+            exterior: "Minimal Wear",
+            img: "https://placehold.co/300x200/1a1a1a/a78bfa?text=Mac-10",
+          },
+          {
+            name: "Cyber Hunter",
+            type: "AK-47",
+            category: "Rifle",
+            price: 120.0,
+            rarity: "pink",
+            exterior: "Factory New",
+            img: "https://placehold.co/300x200/1a1a1a/f472b6?text=AK-47",
+          },
+          {
+            name: "Wasteland",
+            type: "M4A1-S",
+            category: "Rifle",
+            price: 88.2,
+            rarity: "purple",
+            exterior: "Battle-Scarred",
+            img: "https://placehold.co/300x200/1a1a1a/a78bfa?text=M4A1-S",
+          },
+          {
+            name: "Crimson Web",
+            type: "Karambit",
+            category: "Knife",
+            price: 450.5,
+            rarity: "red",
+            exterior: "Minimal Wear",
+            img: "https://placehold.co/300x200/1a1a1a/f87171?text=Karambit",
+          },
+          {
+            name: "Neon Rider",
+            type: "AWP",
+            category: "AWP",
+            price: 215.0,
+            rarity: "pink",
+            exterior: "Factory New",
+            img: "https://placehold.co/300x200/1a1a1a/f472b6?text=AWP",
+          },
+          {
+            name: "Dragon Lore",
+            type: "AWP",
+            category: "AWP",
+            price: 2500.0,
+            rarity: "gold",
+            exterior: "Factory New",
+            img: "https://placehold.co/300x200/1a1a1a/f59e0b?text=AWP",
+          },
+          {
+            name: "The Empress",
+            type: "AK-47",
+            category: "Rifle",
+            price: 180.3,
+            rarity: "red",
+            exterior: "Field-Tested",
+            img: "https://placehold.co/300x200/1a1a1a/f87171?text=AK-47",
+          },
+          {
+            name: "Case Hardened",
+            type: "Five-SeveN",
+            category: "Pistol",
+            price: 33.0,
+            rarity: "blue",
+            exterior: "Well-Worn",
+            img: "https://placehold.co/300x200/1a1a1a/60a5fa?text=Five-SeveN",
+          },
+          {
+            name: "Fade",
+            type: "Glock-18",
+            category: "Pistol",
+            price: 350.0,
+            rarity: "gold",
+            exterior: "Factory New",
+            img: "https://placehold.co/300x200/1a1a1a/f59e0b?text=Glock-18",
+          },
+          {
+            name: "Hyper Beast",
+            type: "M4A4",
+            category: "Rifle",
+            price: 95.0,
+            rarity: "pink",
+            exterior: "Field-Tested",
+            img: "https://placehold.co/300x200/1a1a1a/f472b6?text=M4A4",
+          },
+          {
+            name: "Water Elemental",
+            type: "USP-S",
+            category: "Pistol",
+            price: 15.5,
+            rarity: "blue",
+            exterior: "Minimal Wear",
+            img: "https://placehold.co/300x200/1a1a1a/60a5fa?text=USP-S",
+          },
+        ];
+
+        // Add more items for better filtering experience
+        mockItems.push(
+          ...[
+            {
+              name: "Asiimov",
+              type: "AWP",
+              category: "AWP",
+              price: 150,
+              rarity: "red",
+              exterior: "Battle-Scarred",
+              img: "https://placehold.co/300x200/1a1a1a/f87171?text=AWP-Asiimov",
+            },
+            {
+              name: "Fire Serpent",
+              type: "AK-47",
+              category: "Rifle",
+              price: 800,
+              rarity: "red",
+              exterior: "Minimal Wear",
+              img: "https://placehold.co/300x200/1a1a1a/f87171?text=AK-47-Fire",
+            },
+            {
+              name: "Doppler",
+              type: "M9 Bayonet",
+              category: "Knife",
+              price: 1200,
+              rarity: "gold",
+              exterior: "Factory New",
+              img: "https://placehold.co/300x200/1a1a1a/f59e0b?text=M9-Doppler",
+            },
+          ]
+        );
+
+        const rarityStyles = {
+          common: "bg-gray-500",
+          blue: "bg-gradient-to-r from-cyan-500 to-blue-500",
+          purple: "bg-gradient-to-r from-purple-500 to-indigo-500",
+          pink: "bg-gradient-to-r from-pink-500 to-rose-500",
+          red: "bg-gradient-to-r from-red-500 to-orange-600",
+          gold: "bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400",
+        };
+
+        // DOM Elements
+        const itemGrid = document.getElementById("item-grid");
+        const searchInput = document.getElementById("search-input");
+        const categoryFilters = document.getElementById("category-filters");
+        const exteriorFilters = document.getElementById("exterior-filters");
+        const priceRange = document.getElementById("price-range");
+        const priceValue = document.getElementById("price-value");
+
+        // Filter State
+        let filters = {
+          searchTerm: "",
+          category: "ALL",
+          exteriors: ["Field-Tested"],
+          maxPrice: 2500,
+        };
+
+        // --- RENDER FUNCTION ---
+        function renderItems() {
+          let filteredItems = mockItems.filter((item) => {
+            const searchMatch =
+              filters.searchTerm === "" ||
+              item.name.toLowerCase().includes(filters.searchTerm) ||
+              item.type.toLowerCase().includes(filters.searchTerm);
+
+            // FIX: Changed to check the new 'category' property for an exact match
+            const categoryMatch =
+              filters.category === "ALL" || item.category === filters.category;
+
+            const exteriorMatch =
+              filters.exteriors.length === 0 ||
+              filters.exteriors.includes(item.exterior);
+
+            const priceMatch = item.price <= filters.maxPrice;
+
+            return searchMatch && categoryMatch && exteriorMatch && priceMatch;
+          });
+
+          itemGrid.innerHTML = "";
+          if (filteredItems.length === 0) {
+            itemGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">No items match your filters.</p>`;
+            return;
+          }
+
+          filteredItems.forEach((item) => {
+            const cardHTML = `
+                        <div class="item-card bg-[#2a2a2a] rounded-lg overflow-hidden border border-gray-800 transition-all duration-300 hover:border-emerald-400 hover:-translate-y-1 group">
+                            <div class="p-4 bg-black/20 flex justify-center items-center h-40 overflow-hidden">
+                                <img src="${item.img}" alt="${
+              item.name
+            }" class="item-image h-full w-auto object-contain transition-transform duration-500 ease-in-out">
+                            </div>
+                            <div class="p-3">
+                                <p class="text-gray-400 text-xs truncate">${
+                                  item.exterior
+                                } - ${item.type}</p>
+                                <h3 class="text-white font-semibold text-base truncate group-hover:text-emerald-400 transition-colors">${
+                                  item.name
+                                }</h3>
+                                <p class="text-emerald-400 font-bold text-xl mt-2">$${item.price.toFixed(
+                                  2
+                                )}</p>
+                            </div>
+                            <div class="h-1.5 ${
+                              rarityStyles[item.rarity] || "bg-gray-500"
+                            }"></div>
+                        </div>
+                    `;
+            itemGrid.insertAdjacentHTML("beforeend", cardHTML);
+          });
+        }
+
+        // --- EVENT LISTENERS ---
+        searchInput.addEventListener("input", (e) => {
+          filters.searchTerm = e.target.value.toLowerCase();
+          renderItems();
+        });
+
+        priceRange.addEventListener("input", (e) => {
+          filters.maxPrice = parseInt(e.target.value);
+          priceValue.textContent = `$${filters.maxPrice}`;
+          renderItems();
+        });
+
+        categoryFilters.addEventListener("click", (e) => {
+          if (e.target.tagName === "BUTTON") {
+            filters.category = e.target.dataset.category;
+            // Update styles
+            categoryFilters.querySelectorAll("button").forEach((btn) => {
+              btn.classList.remove("filter-btn-active");
+              btn.classList.add("filter-btn");
+            });
+            e.target.classList.add("filter-btn-active");
+            e.target.classList.remove("filter-btn");
+            renderItems();
+          }
+        });
+
+        exteriorFilters.addEventListener("change", (e) => {
+          const checkedBoxes = exteriorFilters.querySelectorAll(
+            'input[type="checkbox"]:checked'
+          );
+          filters.exteriors = Array.from(checkedBoxes).map((box) => box.value);
+          renderItems();
+        });
+
+        // Add CSS for filter buttons via JS to avoid cluttering HTML
+        const style = document.createElement("style");
+        style.innerHTML = `
+                .filter-btn { background-color: #374151; color: #d1d5db; }
+                .filter-btn:hover { background-color: #4b5563; }
+                .filter-btn-active { background-color: #34d399; color: #000; font-weight: bold; }
+            `;
+        document.head.appendChild(style);
+
+        // Initial Render
+        priceValue.textContent = `$${filters.maxPrice}`;
+        renderItems();
+      });
+    </script>
+  </body>
+</html>
