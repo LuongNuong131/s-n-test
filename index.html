@@ -45,7 +45,7 @@
         background: #6ee7b7;
         border-radius: 50%;
         cursor: pointer;
-        margin-top: -6px; /* Center thumb */
+        margin-top: -6px;
       }
       input[type="range"]::-moz-range-thumb {
         width: 16px;
@@ -54,13 +54,37 @@
         border-radius: 50%;
         cursor: pointer;
       }
+
+      /* Modal styles */
+      .modal-overlay {
+        transition: opacity 0.3s ease;
+      }
+      .modal-content {
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      /* Animation for item cards */
+      .card-enter {
+        animation: card-enter-animation 0.5s ease-out forwards;
+        opacity: 0;
+      }
+      @keyframes card-enter-animation {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
     </style>
   </head>
   <body class="overflow-x-hidden">
     <div class="min-h-screen w-full flex flex-col">
       <!-- Header -->
       <header
-        class="bg-[#1a1a1a]/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50"
+        class="bg-[#1a1a1a]/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-40"
       >
         <div class="container mx-auto px-4">
           <div class="flex items-center justify-between h-16">
@@ -68,7 +92,7 @@
               <h1
                 class="text-2xl font-black text-white uppercase tracking-wider"
               >
-                <span class="text-emerald-400">Echo</span>MMO
+                <span class="text-emerald-400">Contra</span>Deals
               </h1>
               <nav
                 class="hidden md:flex items-center space-x-6 text-sm font-medium"
@@ -106,11 +130,33 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- Left Sidebar: Filters -->
           <aside
-            class="lg:col-span-2 bg-[#1a1a1a] rounded-lg p-4 self-start sticky top-20"
+            id="filter-sidebar"
+            class="lg:col-span-2 bg-[#1a1a1a] rounded-lg p-4 self-start lg:sticky top-24 transform -translate-x-full lg:transform-none fixed lg:relative h-full lg:h-auto w-64 lg:w-full z-50 transition-transform duration-300 ease-in-out"
           >
-            <h2 class="text-lg font-bold mb-4 border-b border-gray-700 pb-2">
-              FILTER
-            </h2>
+            <div
+              class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2"
+            >
+              <h2 class="text-lg font-bold">FILTER</h2>
+              <button
+                id="close-filter-btn"
+                class="lg:hidden text-gray-400 hover:text-white"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
             <div class="space-y-6">
               <div>
                 <h3 class="font-semibold text-sm mb-2 text-gray-400">
@@ -211,7 +257,7 @@
                   <span
                     id="price-value"
                     class="text-emerald-400 font-bold text-sm"
-                    >$2500</span
+                    >$3000</span
                   >
                 </div>
                 <input
@@ -219,7 +265,7 @@
                   type="range"
                   min="0"
                   max="3000"
-                  value="2500"
+                  value="3000"
                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
@@ -229,171 +275,327 @@
           <!-- Center Content: Item Grid -->
           <div class="lg:col-span-10">
             <div
-              class="bg-[#1a1a1a] rounded-lg p-4 mb-4 flex items-center gap-4"
+              class="bg-[#1a1a1a] rounded-lg p-4 mb-4 flex flex-col sm:flex-row items-center gap-4"
             >
-              <input
-                id="search-input"
-                type="text"
-                placeholder="Search for items by name or type..."
-                class="w-full bg-[#2a2a2a] border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-              />
+              <div class="flex-grow w-full relative">
+                <input
+                  id="search-input"
+                  type="text"
+                  placeholder="Search for items by name or type..."
+                  class="w-full bg-[#2a2a2a] border border-gray-700 rounded-md px-4 py-2 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                />
+                <svg
+                  class="w-5 h-5 text-gray-400 absolute top-1/2 left-3 -translate-y-1/2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="flex items-center gap-4 w-full sm:w-auto">
+                <button
+                  id="open-filter-btn"
+                  class="lg:hidden bg-gray-700 p-2 rounded-md text-white"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h9.5a.75.75 0 010 1.5h-9.5A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <select
+                  id="sort-select"
+                  class="bg-[#2a2a2a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="name-asc">Name: A to Z</option>
+                  <option value="name-desc">Name: Z to A</option>
+                </select>
+              </div>
             </div>
             <div
               id="item-grid"
-              class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+              class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
             >
+              <!-- Skeleton loaders -->
               <!-- Item cards will be injected here by JavaScript -->
             </div>
+            <div
+              id="pagination-controls"
+              class="flex justify-center items-center mt-8 space-x-2"
+            ></div>
           </div>
         </div>
       </main>
     </div>
 
+    <!-- Item Detail Modal -->
+    <div
+      id="item-modal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0 pointer-events-none modal-overlay"
+    >
+      <div
+        class="bg-[#1e1e1e] rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col md:flex-row overflow-hidden border border-gray-700 opacity-0 transform scale-95 modal-content"
+      >
+        <div
+          id="modal-image-container"
+          class="md:w-1/2 bg-black/20 flex items-center justify-center p-4"
+        >
+          <img
+            id="modal-img"
+            src=""
+            alt="Item image"
+            class="max-h-full max-w-full object-contain"
+          />
+        </div>
+        <div class="md:w-1/2 p-6 flex flex-col overflow-y-auto">
+          <div>
+            <p
+              id="modal-type"
+              class="text-emerald-400 text-sm font-semibold"
+            ></p>
+            <h2 id="modal-name" class="text-3xl font-bold text-white my-1"></h2>
+            <p id="modal-exterior" class="text-gray-400 text-sm mb-4"></p>
+            <p
+              id="modal-description"
+              class="text-gray-300 text-base leading-relaxed mb-6"
+            ></p>
+          </div>
+          <div
+            class="mt-auto pt-6 border-t border-gray-700 flex items-center justify-between"
+          >
+            <p id="modal-price" class="text-3xl font-black text-white"></p>
+            <button
+              class="bg-emerald-500 text-black font-bold py-2 px-6 rounded-md hover:bg-emerald-400 transition-all transform hover:scale-105"
+            >
+              BUY NOW
+            </button>
+          </div>
+          <button
+            id="modal-close-btn"
+            class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      id="filter-overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
+    ></div>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // ... (rest of the script)
         const mockItems = [
           {
+            id: 1,
             name: "Lichon Dashed",
             type: "Glock-18",
             category: "Pistol",
             price: 24.5,
             rarity: "gold",
             exterior: "Field-Tested",
-            img: "https://placehold.co/300x200/1a1a1a/6ee7b7?text=Glock-18",
+            img: "https://placehold.co/400x300/1a1a1a/6ee7b7?text=Glock-18",
+            description:
+              "A custom-painted Glock-18 with a striking dashed pattern. A favorite among rising stars.",
           },
           {
+            id: 2,
             name: "Azure Zebra",
             type: "Mac-10",
             category: "SMG",
             price: 45.75,
             rarity: "purple",
             exterior: "Minimal Wear",
-            img: "https://placehold.co/300x200/1a1a1a/a78bfa?text=Mac-10",
+            img: "https://placehold.co/400x300/1a1a1a/a78bfa?text=Mac-10",
+            description:
+              "Features a blue zebra stripe pattern, perfect for fast and aggressive plays.",
           },
           {
+            id: 3,
             name: "Cyber Hunter",
             type: "AK-47",
             category: "Rifle",
             price: 120.0,
             rarity: "pink",
             exterior: "Factory New",
-            img: "https://placehold.co/300x200/1a1a1a/f472b6?text=AK-47",
+            img: "https://placehold.co/400x300/1a1a1a/f472b6?text=AK-47",
+            description:
+              "A high-tech design with neon accents. One shot, one less problem.",
           },
           {
+            id: 4,
             name: "Wasteland",
             type: "M4A1-S",
             category: "Rifle",
             price: 88.2,
             rarity: "purple",
             exterior: "Battle-Scarred",
-            img: "https://placehold.co/300x200/1a1a1a/a78bfa?text=M4A1-S",
+            img: "https://placehold.co/400x300/1a1a1a/a78bfa?text=M4A1-S",
+            description:
+              "This rifle has seen better days, but its spirit remains unbroken. A true survivor.",
           },
           {
+            id: 5,
             name: "Crimson Web",
             type: "Karambit",
             category: "Knife",
             price: 450.5,
             rarity: "red",
             exterior: "Minimal Wear",
-            img: "https://placehold.co/300x200/1a1a1a/f87171?text=Karambit",
+            img: "https://placehold.co/400x300/1a1a1a/f87171?text=Karambit",
+            description:
+              "A deadly curved blade caught in a crimson web. The pattern is everything.",
           },
           {
+            id: 6,
             name: "Neon Rider",
             type: "AWP",
             category: "AWP",
             price: 215.0,
             rarity: "pink",
             exterior: "Factory New",
-            img: "https://placehold.co/300x200/1a1a1a/f472b6?text=AWP",
+            img: "https://placehold.co/400x300/1a1a1a/f472b6?text=AWP",
+            description:
+              "Inspired by retro-futuristic art, this AWP is a blast from the past.",
           },
           {
+            id: 7,
             name: "Dragon Lore",
             type: "AWP",
             category: "AWP",
             price: 2500.0,
             rarity: "gold",
             exterior: "Factory New",
-            img: "https://placehold.co/300x200/1a1a1a/f59e0b?text=AWP",
+            img: "https://placehold.co/400x300/1a1a1a/f59e0b?text=AWP",
+            description:
+              "The legendary sniper rifle, painted with a dragon spitting fire. A true collector's piece.",
           },
           {
+            id: 8,
             name: "The Empress",
             type: "AK-47",
             category: "Rifle",
             price: 180.3,
             rarity: "red",
             exterior: "Field-Tested",
-            img: "https://placehold.co/300x200/1a1a1a/f87171?text=AK-47",
+            img: "https://placehold.co/400x300/1a1a1a/f87171?text=AK-47",
+            description:
+              "A regal design featuring the image of a powerful empress. Commands respect.",
           },
           {
+            id: 9,
             name: "Case Hardened",
             type: "Five-SeveN",
             category: "Pistol",
             price: 33.0,
             rarity: "blue",
             exterior: "Well-Worn",
-            img: "https://placehold.co/300x200/1a1a1a/60a5fa?text=Five-SeveN",
+            img: "https://placehold.co/400x300/1a1a1a/60a5fa?text=Five-SeveN",
+            description:
+              "The case-hardening process creates a unique, marbled pattern of blues and golds.",
           },
           {
+            id: 10,
             name: "Fade",
             type: "Glock-18",
             category: "Pistol",
             price: 350.0,
             rarity: "gold",
             exterior: "Factory New",
-            img: "https://placehold.co/300x200/1a1a1a/f59e0b?text=Glock-18",
+            img: "https://placehold.co/400x300/1a1a1a/f59e0b?text=Glock-18",
+            description:
+              "Features a transparent coat of paint that fades between colors along the body of the weapon.",
           },
           {
+            id: 11,
             name: "Hyper Beast",
             type: "M4A4",
             category: "Rifle",
             price: 95.0,
             rarity: "pink",
             exterior: "Field-Tested",
-            img: "https://placehold.co/300x200/1a1a1a/f472b6?text=M4A4",
+            img: "https://placehold.co/400x300/1a1a1a/f472b6?text=M4A4",
+            description:
+              "A monstrous, psychedelic creature adorns this M4A4. Unleash the beast.",
           },
           {
+            id: 12,
             name: "Water Elemental",
             type: "USP-S",
             category: "Pistol",
             price: 15.5,
             rarity: "blue",
             exterior: "Minimal Wear",
-            img: "https://placehold.co/300x200/1a1a1a/60a5fa?text=USP-S",
+            img: "https://placehold.co/400x300/1a1a1a/60a5fa?text=USP-S",
+            description:
+              "A fluid and flowing design that mimics the movement of water.",
+          },
+          {
+            id: 13,
+            name: "Asiimov",
+            type: "AWP",
+            category: "AWP",
+            price: 150,
+            rarity: "red",
+            exterior: "Battle-Scarred",
+            img: "https://placehold.co/400x300/1a1a1a/f87171?text=AWP-Asiimov",
+            description:
+              "A sci-fi inspired design with clean lines and a distinct color palette.",
+          },
+          {
+            id: 14,
+            name: "Fire Serpent",
+            type: "AK-47",
+            category: "Rifle",
+            price: 800,
+            rarity: "red",
+            exterior: "Minimal Wear",
+            img: "https://placehold.co/400x300/1a1a1a/f87171?text=AK-47-Fire",
+            description:
+              "An iconic and rare skin depicting a green serpent, a symbol of power.",
+          },
+          {
+            id: 15,
+            name: "Doppler",
+            type: "M9 Bayonet",
+            category: "Knife",
+            price: 1200,
+            rarity: "gold",
+            exterior: "Factory New",
+            img: "https://placehold.co/400x300/1a1a1a/f59e0b?text=M9-Doppler",
+            description:
+              "Anodized with a cosmic pattern, this knife is a true spectacle of colors.",
           },
         ];
-
-        // Add more items for better filtering experience
-        mockItems.push(
-          ...[
-            {
-              name: "Asiimov",
-              type: "AWP",
-              category: "AWP",
-              price: 150,
-              rarity: "red",
-              exterior: "Battle-Scarred",
-              img: "https://placehold.co/300x200/1a1a1a/f87171?text=AWP-Asiimov",
-            },
-            {
-              name: "Fire Serpent",
-              type: "AK-47",
-              category: "Rifle",
-              price: 800,
-              rarity: "red",
-              exterior: "Minimal Wear",
-              img: "https://placehold.co/300x200/1a1a1a/f87171?text=AK-47-Fire",
-            },
-            {
-              name: "Doppler",
-              type: "M9 Bayonet",
-              category: "Knife",
-              price: 1200,
-              rarity: "gold",
-              exterior: "Factory New",
-              img: "https://placehold.co/300x200/1a1a1a/f59e0b?text=M9-Doppler",
-            },
-          ]
-        );
 
         const rarityStyles = {
           common: "bg-gray-500",
@@ -411,45 +613,91 @@
         const exteriorFilters = document.getElementById("exterior-filters");
         const priceRange = document.getElementById("price-range");
         const priceValue = document.getElementById("price-value");
+        const sortSelect = document.getElementById("sort-select");
+        const paginationControls = document.getElementById(
+          "pagination-controls"
+        );
 
-        // Filter State
-        let filters = {
+        // Modal elements
+        const itemModal = document.getElementById("item-modal");
+        const modalCloseBtn = document.getElementById("modal-close-btn");
+
+        // Responsive filter elements
+        const filterSidebar = document.getElementById("filter-sidebar");
+        const openFilterBtn = document.getElementById("open-filter-btn");
+        const closeFilterBtn = document.getElementById("close-filter-btn");
+        const filterOverlay = document.getElementById("filter-overlay");
+
+        // State
+        let state = {
           searchTerm: "",
           category: "ALL",
           exteriors: ["Field-Tested"],
-          maxPrice: 2500,
+          maxPrice: 3000,
+          sortBy: "price-asc",
+          currentPage: 1,
+          itemsPerPage: 10,
         };
 
-        // --- RENDER FUNCTION ---
-        function renderItems() {
-          let filteredItems = mockItems.filter((item) => {
+        function processAndRender() {
+          // 1. Filtering
+          let processedItems = mockItems.filter((item) => {
             const searchMatch =
-              filters.searchTerm === "" ||
-              item.name.toLowerCase().includes(filters.searchTerm) ||
-              item.type.toLowerCase().includes(filters.searchTerm);
-
-            // FIX: Changed to check the new 'category' property for an exact match
+              state.searchTerm === "" ||
+              item.name.toLowerCase().includes(state.searchTerm) ||
+              item.type.toLowerCase().includes(state.searchTerm);
             const categoryMatch =
-              filters.category === "ALL" || item.category === filters.category;
-
+              state.category === "ALL" || item.category === state.category;
             const exteriorMatch =
-              filters.exteriors.length === 0 ||
-              filters.exteriors.includes(item.exterior);
-
-            const priceMatch = item.price <= filters.maxPrice;
-
+              state.exteriors.length === 0 ||
+              state.exteriors.includes(item.exterior);
+            const priceMatch = item.price <= state.maxPrice;
             return searchMatch && categoryMatch && exteriorMatch && priceMatch;
           });
 
+          // 2. Sorting
+          processedItems.sort((a, b) => {
+            switch (state.sortBy) {
+              case "price-asc":
+                return a.price - b.price;
+              case "price-desc":
+                return b.price - a.price;
+              case "name-asc":
+                return a.name.localeCompare(b.name);
+              case "name-desc":
+                return b.name.localeCompare(a.name);
+              default:
+                return 0;
+            }
+          });
+
+          // 3. Pagination
+          const totalPages = Math.ceil(
+            processedItems.length / state.itemsPerPage
+          );
+          if (state.currentPage > totalPages && totalPages > 0)
+            state.currentPage = totalPages;
+
+          const paginatedItems = processedItems.slice(
+            (state.currentPage - 1) * state.itemsPerPage,
+            state.currentPage * state.itemsPerPage
+          );
+
+          renderGrid(paginatedItems);
+          renderPagination(totalPages);
+        }
+
+        function renderGrid(items) {
           itemGrid.innerHTML = "";
-          if (filteredItems.length === 0) {
+          if (items.length === 0) {
             itemGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">No items match your filters.</p>`;
             return;
           }
-
-          filteredItems.forEach((item) => {
+          items.forEach((item, index) => {
             const cardHTML = `
-                        <div class="item-card bg-[#2a2a2a] rounded-lg overflow-hidden border border-gray-800 transition-all duration-300 hover:border-emerald-400 hover:-translate-y-1 group">
+                        <div class="item-card bg-[#2a2a2a] rounded-lg overflow-hidden border border-gray-800 transition-all duration-300 hover:border-emerald-400 hover:-translate-y-1 group cursor-pointer card-enter" data-item-id="${
+                          item.id
+                        }" style="animation-delay: ${index * 50}ms;">
                             <div class="p-4 bg-black/20 flex justify-center items-center h-40 overflow-hidden">
                                 <img src="${item.img}" alt="${
               item.name
@@ -469,58 +717,128 @@
                             <div class="h-1.5 ${
                               rarityStyles[item.rarity] || "bg-gray-500"
                             }"></div>
-                        </div>
-                    `;
+                        </div>`;
             itemGrid.insertAdjacentHTML("beforeend", cardHTML);
           });
         }
 
+        function renderPagination(totalPages) {
+          paginationControls.innerHTML = "";
+          if (totalPages <= 1) return;
+
+          for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement("button");
+            pageBtn.textContent = i;
+            pageBtn.className = `px-3 py-1 text-sm rounded-md ${
+              state.currentPage === i
+                ? "bg-emerald-500 text-black font-bold"
+                : "bg-gray-700 text-white"
+            }`;
+            pageBtn.onclick = () => {
+              state.currentPage = i;
+              processAndRender();
+            };
+            paginationControls.appendChild(pageBtn);
+          }
+        }
+
+        function openModal(itemId) {
+          const item = mockItems.find((i) => i.id == itemId);
+          if (!item) return;
+
+          document.getElementById("modal-img").src = item.img;
+          document.getElementById("modal-type").textContent = item.category;
+          document.getElementById("modal-name").textContent = item.name;
+          document.getElementById("modal-exterior").textContent = item.exterior;
+          document.getElementById("modal-description").textContent =
+            item.description;
+          document.getElementById(
+            "modal-price"
+          ).textContent = `$${item.price.toFixed(2)}`;
+
+          itemModal.classList.remove("pointer-events-none", "opacity-0");
+          itemModal
+            .querySelector(".modal-content")
+            .classList.remove("opacity-0", "scale-95");
+        }
+
+        function closeModal() {
+          itemModal
+            .querySelector(".modal-content")
+            .classList.add("opacity-0", "scale-95");
+          itemModal.classList.add("opacity-0");
+          setTimeout(() => itemModal.classList.add("pointer-events-none"), 300);
+        }
+
         // --- EVENT LISTENERS ---
         searchInput.addEventListener("input", (e) => {
-          filters.searchTerm = e.target.value.toLowerCase();
-          renderItems();
+          state.searchTerm = e.target.value.toLowerCase();
+          state.currentPage = 1;
+          processAndRender();
         });
-
         priceRange.addEventListener("input", (e) => {
-          filters.maxPrice = parseInt(e.target.value);
-          priceValue.textContent = `$${filters.maxPrice}`;
-          renderItems();
+          state.maxPrice = parseInt(e.target.value);
+          priceValue.textContent = `$${state.maxPrice}`;
+          processAndRender();
+        });
+        sortSelect.addEventListener("change", (e) => {
+          state.sortBy = e.target.value;
+          state.currentPage = 1;
+          processAndRender();
         });
 
         categoryFilters.addEventListener("click", (e) => {
           if (e.target.tagName === "BUTTON") {
-            filters.category = e.target.dataset.category;
-            // Update styles
-            categoryFilters.querySelectorAll("button").forEach((btn) => {
-              btn.classList.remove("filter-btn-active");
-              btn.classList.add("filter-btn");
-            });
-            e.target.classList.add("filter-btn-active");
-            e.target.classList.remove("filter-btn");
-            renderItems();
+            state.category = e.target.dataset.category;
+            categoryFilters
+              .querySelectorAll("button")
+              .forEach((btn) =>
+                btn.classList.replace("filter-btn-active", "filter-btn")
+              );
+            e.target.classList.replace("filter-btn", "filter-btn-active");
+            state.currentPage = 1;
+            processAndRender();
           }
         });
 
-        exteriorFilters.addEventListener("change", (e) => {
-          const checkedBoxes = exteriorFilters.querySelectorAll(
-            'input[type="checkbox"]:checked'
-          );
-          filters.exteriors = Array.from(checkedBoxes).map((box) => box.value);
-          renderItems();
+        exteriorFilters.addEventListener("change", () => {
+          state.exteriors = Array.from(
+            exteriorFilters.querySelectorAll("input:checked")
+          ).map((box) => box.value);
+          state.currentPage = 1;
+          processAndRender();
         });
 
-        // Add CSS for filter buttons via JS to avoid cluttering HTML
-        const style = document.createElement("style");
-        style.innerHTML = `
-                .filter-btn { background-color: #374151; color: #d1d5db; }
-                .filter-btn:hover { background-color: #4b5563; }
-                .filter-btn-active { background-color: #34d399; color: #000; font-weight: bold; }
-            `;
-        document.head.appendChild(style);
+        itemGrid.addEventListener("click", (e) => {
+          const card = e.target.closest(".item-card");
+          if (card) openModal(card.dataset.itemId);
+        });
 
-        // Initial Render
-        priceValue.textContent = `$${filters.maxPrice}`;
-        renderItems();
+        modalCloseBtn.addEventListener("click", closeModal);
+        itemModal.addEventListener("click", (e) => {
+          if (e.target === itemModal) closeModal();
+        });
+
+        // Responsive filter listeners
+        openFilterBtn.addEventListener("click", () => {
+          filterSidebar.classList.remove("-translate-x-full");
+          filterOverlay.classList.remove("hidden");
+        });
+        closeFilterBtn.addEventListener("click", () => {
+          filterSidebar.classList.add("-translate-x-full");
+          filterOverlay.classList.add("hidden");
+        });
+        filterOverlay.addEventListener("click", () => {
+          filterSidebar.classList.add("-translate-x-full");
+          filterOverlay.classList.add("hidden");
+        });
+
+        // Initial Setup
+        const style = document.createElement("style");
+        style.innerHTML = `.filter-btn { background-color: #374151; color: #d1d5db; } .filter-btn:hover { background-color: #4b5563; } .filter-btn-active { background-color: #34d399; color: #000; font-weight: bold; }`;
+        document.head.appendChild(style);
+        priceValue.textContent = `$${state.maxPrice}`;
+        processAndRender();
       });
     </script>
   </body>
